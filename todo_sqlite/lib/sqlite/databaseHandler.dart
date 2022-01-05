@@ -1,28 +1,28 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'todos.dart';
 
-class Handler {
+class DatabaseHandler {
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'todos.db'),
+      join(path, 'todo.db'),
       onCreate: (database, version) async {
         await database.execute(
-            "create table todos(id integer primary key autoincrement, todoName text, todoDesc text, todoState boolean)");
+            "create table todos(id integer primary key autoincrement, name text, desc text, state integer)");
       },
       version: 1,
     );
   }
 
-  Future<int> insertTodos(Todos todos) async {
+  Future<int> insertTodos(List<Todos> todos) async {
     int result = 0;
     final Database db = await initializeDB();
-    result = await db.rawInsert(
-        'insert into todos(todoName, todoDesc, todoState) values (?,?,?,?)',
-        [todos.todoName, todos.todoDesc, todos.todoState]);
-
+    for (var student in todos) {
+      result = await db.rawInsert(
+          'insert into todos(name, desc, state) values (?,?,?)',
+          [student.name, student.desc, 0]);
+    }
     return result;
   }
 
@@ -41,11 +41,11 @@ class Handler {
   Future<int> updateTodos(List<Todos> todos) async {
     int result = 0;
     final Database db = await initializeDB();
-    for (var todo in todos) {
+    for (var student in todos) {
       result = await db.rawUpdate(
-          'update todos set todoName = ?, todoDesc = ?, todoState = ? where id = ?',
-          [todo.todoName, todo.todoDesc, todo.todoState, todo.id]);
+          'update todos set name = ?, desc = ?, state = ? where id = ?',
+          [student.name, student.desc, student.state, student.id]);
     }
     return result;
   }
-} // <<<<
+} // DatabaseHandler

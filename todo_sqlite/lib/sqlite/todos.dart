@@ -1,31 +1,18 @@
 class Todos {
   final int? id;
-  // final DateTime todoDate;
-  final String todoName;
-  final String todoDesc;
-  final bool todoState;
+  final String name;
+  final String desc;
+  final int state;
 
-  Todos(
-      {this.id,
-      // required this.todoDate,
-      required this.todoName,
-      required this.todoDesc,
-      required this.todoState});
+  Todos({this.id, required this.name, required this.desc, required this.state});
 
   Todos.fromMap(Map<String, dynamic> res)
       : id = res['id'],
-        // todoDate = res['todoDate'],
-        todoName = res['todoName'],
-        todoDesc = res['todoDesc'],
-        todoState = res['todoState'];
+        name = res['name'],
+        desc = res['desc'],
+        state = res['state'];
 
   Map<String, Object?> toMap() {
-    return {
-      'id': id,
-      // 'todoDate': todoDate,
-      'todoName': todoName,
-      'todoDesc': todoDesc,
-      'todoState': todoState
-    };
+    return {'id': id, 'name': name, 'desc': desc, 'state': state};
   }
 }
