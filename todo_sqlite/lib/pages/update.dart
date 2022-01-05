@@ -52,78 +52,74 @@ class _UpdateTodosState extends State<UpdateTodos> {
       appBar: AppBar(),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Text(
-                name,
-                style: title1,
-              ),
-            ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(
-                    name,
-                    style: title1,
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: title1,
+                    ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(desc,
-                      style: bodyText1.override(
-                        fontFamily: 'Lexend Deca',
-                        color: tertiaryColor,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                      )),
-                  Divider(
-                    indent: 16,
-                    endIndent: 16,
-                    color: black55,
+                  Expanded(
+                    child: Text(desc,
+                        style: bodyText1.override(
+                          fontFamily: 'Lexend Deca',
+                          color: tertiaryColor,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                        )),
                   ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Due',
-                            style: subtitle1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            state.toString(),
-                            style: title2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                      child: Text("")),
                 ],
               ),
             ),
+            Divider(
+              indent: 16,
+              endIndent: 16,
+              color: black55,
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Due',
+                      style: subtitle1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Text(
+                      state.toString(),
+                      style: title2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                child: Text("")),
           ],
         ),
       ),
