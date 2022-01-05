@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
@@ -28,9 +26,9 @@ class _UpdateTodosState extends State<UpdateTodos> {
 
 // Create Constructor
   _UpdateTodosState(String rname, String rdesc, int rstate) {
-    this.name = rname;
-    this.desc = rdesc;
-    this.state = rstate;
+    name = rname;
+    desc = rdesc;
+    state = rstate;
   }
 
   late String name;
@@ -42,93 +40,91 @@ class _UpdateTodosState extends State<UpdateTodos> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    nameController.text = this.name;
-    descController.text = this.desc;
+    nameController.text = name;
+    descController.text = desc;
 
     handler = DatabaseHandler();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Update for SQLite"),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        name,
-                        style: title1,
-                      ),
-                    ),
-                  ],
-                ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                name,
+                style: title1,
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(desc,
-                        style: bodyText1.override(
-                          fontFamily: 'Lexend Deca',
-                          color: tertiaryColor,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                        )),
-                    Divider(
-                      indent: 16,
-                      endIndent: 16,
-                      color: black55,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Due',
-                              style: subtitle1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              state.toString(),
-                              style: title2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                        child: Text("")),
-                  ],
-                ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    name,
+                    style: title1,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(desc,
+                      style: bodyText1.override(
+                        fontFamily: 'Lexend Deca',
+                        color: tertiaryColor,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      )),
+                  Divider(
+                    indent: 16,
+                    endIndent: 16,
+                    color: black55,
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Due',
+                            style: subtitle1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            state.toString(),
+                            style: title2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                      child: Text("")),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

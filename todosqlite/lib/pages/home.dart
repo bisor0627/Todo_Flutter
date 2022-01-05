@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_sqlite/config/constant.dart';
-import 'package:todo_sqlite/pages/insert.dart';
-import 'package:todo_sqlite/pages/update.dart';
-import 'package:todo_sqlite/sqlite/databaseHandler.dart';
-import 'package:todo_sqlite/sqlite/todos.dart';
+import 'package:todosqlite/config/constant.dart';
+import 'package:todosqlite/pages/insert.dart';
+import 'package:todosqlite/pages/update.dart';
+import 'package:todosqlite/sqlite/databaseHandler.dart';
+import 'package:todosqlite/sqlite/todos.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -142,69 +142,65 @@ class _HomePageState extends State<HomePage> {
                               },
                               child: GestureDetector(
                                 child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16, 0, 0, 0),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  snapshot.data![index].name,
-                                                  style: title2,
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(0, 4, 0, 0),
-                                                  child: Text(
-                                                    snapshot.data![index].desc,
-                                                    style: bodyText2.override(
-                                                        fontFamily:
-                                                            'Lexend Deca',
-                                                        color: primarycolor,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 0, 12, 0),
-                                              child: IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  snapshot.data![index].state ==
-                                                          0
-                                                      ? Icons.radio_button_off
-                                                      : Icons.check_circle,
-                                                  color: primarycolor,
-                                                  size: 25,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  16, 0, 0, 0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                snapshot.data![index].name,
+                                                style: title2,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(0, 4, 0, 0),
+                                                child: Text(
+                                                  snapshot.data![index].desc,
+                                                  style: bodyText2.override(
+                                                      fontFamily: 'Lexend Deca',
+                                                      color: primarycolor,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.normal),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0, 0, 12, 0),
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                snapshot.data![index].state == 0
+                                                    ? Icons.check_circle
+                                                    : Icons.radio_button_off,
+                                                color: primarycolor,
+                                                size: 25,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 onTap: () {
