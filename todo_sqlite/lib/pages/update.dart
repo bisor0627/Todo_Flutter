@@ -3,20 +3,17 @@ import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
 
-class UpdateTodos extends StatefulWidget {
-  final String rname;
-  final String rdesc;
-  final int rstate;
+class Repo {
+  static late Todos todoData;
+}
 
-  const UpdateTodos(
-      {Key? key,
-      required this.rname,
-      required this.rdesc,
-      required this.rstate})
-      : super(key: key);
+class UpdateTodos extends StatefulWidget {
+  final Todos rtodo;
+
+  const UpdateTodos({Key? key, required this.rtodo}) : super(key: key);
 
   @override
-  _UpdateTodosState createState() => _UpdateTodosState(rname, rdesc, rstate);
+  _UpdateTodosState createState() => _UpdateTodosState(rtodo);
 }
 
 class _UpdateTodosState extends State<UpdateTodos> {
@@ -25,23 +22,17 @@ class _UpdateTodosState extends State<UpdateTodos> {
   TextEditingController descController = TextEditingController();
 
 // Create Constructor
-  _UpdateTodosState(String rname, String rdesc, int rstate) {
-    name = rname;
-    desc = rdesc;
-    state = rstate;
+  _UpdateTodosState(Todos rtodo) {
+    Repo.todoData = rtodo;
   }
-
-  late String name;
-  late String desc;
-  late int state;
   late String result;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    nameController.text = name;
-    descController.text = desc;
+    nameController.text = Repo.todoData.name;
+    descController.text = Repo.todoData.desc;
 
     handler = DatabaseHandler();
   }
@@ -60,7 +51,7 @@ class _UpdateTodosState extends State<UpdateTodos> {
                 children: [
                   Expanded(
                     child: Text(
-                      name,
+                      Repo.todoData.name,
                       style: title1,
                     ),
                   ),
@@ -73,7 +64,7 @@ class _UpdateTodosState extends State<UpdateTodos> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
-                    child: Text(desc,
+                    child: Text(Repo.todoData.desc,
                         style: bodyText1.override(
                           fontFamily: 'Lexend Deca',
                           color: tertiaryColor,
@@ -103,23 +94,26 @@ class _UpdateTodosState extends State<UpdateTodos> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: Text(
-                      state.toString(),
-                      style: title2,
-                    ),
-                  ),
-                ],
+            IconButton(
+              onPressed: () {
+                if (Repo.todoData.state == 0) {
+                  setState(() {
+                    Repo.todoData.state = 1;
+                  });
+                } else {
+                  setState(() {
+                    Repo.todoData.state = 0;
+                  });
+                }
+              },
+              icon: Icon(
+                Repo.todoData.state == 0
+                    ? Icons.radio_button_off
+                    : Icons.check_circle,
+                color: primarycolor,
+                size: 25,
               ),
             ),
-            Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                child: Text("")),
           ],
         ),
       ),

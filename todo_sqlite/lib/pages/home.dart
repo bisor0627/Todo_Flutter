@@ -190,7 +190,12 @@ class _HomePageState extends State<HomePage> {
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(0, 0, 12, 0),
                                               child: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  updateStateTodo(
+                                                      snapshot.data![index].id,
+                                                      snapshot
+                                                          .data![index].state);
+                                                },
                                                 icon: Icon(
                                                   snapshot.data![index].state ==
                                                           0
@@ -211,10 +216,14 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                     return UpdateTodos(
-                                        rname: snapshot.data![index].name,
-                                        rdesc: snapshot.data![index].desc,
-                                        rstate: snapshot.data![index].state);
-                                  })).then((value) => reloadData());
+                                      rtodo: Todos(
+                                          id: snapshot.data![index].id,
+                                          name: snapshot.data![index].name,
+                                          desc: snapshot.data![index].desc,
+                                          state: snapshot.data![index].state),
+                                    );
+                                  })).then(
+                                      (value) => updateTodo(Repo.todoData));
                                 },
                               ));
                         });
@@ -234,5 +243,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       handler.queryTodos();
     });
+  }
+
+  Future updateStateTodo(int? id, int state) async {
+    await handler.updateState(id, state);
+    return reloadData();
+  }
+
+  Future updateTodo(Todos todo) async {
+    print(todo);
+    await handler.updateTodos([todo]);
+    return reloadData();
   }
 }

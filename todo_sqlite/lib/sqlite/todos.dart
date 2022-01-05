@@ -1,8 +1,8 @@
 class Todos {
-  final int? id;
-  final String name;
-  final String desc;
-  final int state;
+  int? id;
+  String name;
+  String desc;
+  late int state;
 
   Todos({this.id, required this.name, required this.desc, required this.state});
 

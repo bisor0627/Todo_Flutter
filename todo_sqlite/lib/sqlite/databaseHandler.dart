@@ -48,4 +48,14 @@ class DatabaseHandler {
     }
     return result;
   }
+
+  Future<int> updateState(int? id, int state) async {
+    int result = 0;
+    final Database db = await initializeDB();
+
+    result = await db.rawUpdate(
+        'update todos set state = ? where id = ?', [state == 0 ? 1 : 0, id]);
+
+    return result;
+  }
 } // DatabaseHandler
