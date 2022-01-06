@@ -39,7 +39,7 @@ class _InsertTodoState extends State<InsertTodos> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 20, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 20, 16, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -51,7 +51,7 @@ class _InsertTodoState extends State<InsertTodos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -70,7 +70,7 @@ class _InsertTodoState extends State<InsertTodos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: TextFormField(
                     controller: nameController,
                     obscureText: false,
@@ -90,14 +90,14 @@ class _InsertTodoState extends State<InsertTodos> {
                         fontSize: 14,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: black55,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: black55,
                           width: 1,
                         ),
@@ -110,7 +110,7 @@ class _InsertTodoState extends State<InsertTodos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: TextFormField(
                     controller: descController,
                     obscureText: false,
@@ -130,14 +130,14 @@ class _InsertTodoState extends State<InsertTodos> {
                         fontSize: 14,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: black55,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: black55,
                           width: 1,
                         ),
@@ -152,7 +152,7 @@ class _InsertTodoState extends State<InsertTodos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: InkWell(
                     onTap: () async {},
                     child: Container(
@@ -167,7 +167,8 @@ class _InsertTodoState extends State<InsertTodos> {
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(10, 14, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(10, 14, 0, 0),
                         child: Text(
                           // dateTimeFormat('MMMEd', datePicked),
                           "Sample",
@@ -183,7 +184,7 @@ class _InsertTodoState extends State<InsertTodos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -195,7 +196,7 @@ class _InsertTodoState extends State<InsertTodos> {
                             onPressed: () async {
                               Navigator.pop(context);
                             },
-                            child: Text("Cancel")),
+                            child: const Text("Cancel")),
                       ),
                       Container(
                         width: 130,
@@ -205,7 +206,7 @@ class _InsertTodoState extends State<InsertTodos> {
                               addTodo();
                               Navigator.pop(context);
                             },
-                            child: Text("Creat Task")),
+                            child: const Text("Creat Task")),
                       ),
                     ],
                   ),
@@ -217,8 +218,11 @@ class _InsertTodoState extends State<InsertTodos> {
   }
 
   Future<int> addTodo() async {
-    Todos firstTodo =
-        Todos(name: nameController.text, desc: descController.text, state: 0);
+    Todos firstTodo = Todos(
+        name: nameController.text,
+        desc: descController.text,
+        state: 0,
+        datetime: DateTime.now());
 
     return await handler.insertTodos([firstTodo]);
   }

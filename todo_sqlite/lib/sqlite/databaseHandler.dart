@@ -9,7 +9,7 @@ class DatabaseHandler {
       join(path, 'todo.db'),
       onCreate: (database, version) async {
         await database.execute(
-            "create table todos(id integer primary key autoincrement, name text, desc text, state integer)");
+            "create table todos(id integer primary key autoincrement, name text, desc text, state integer, datetime text)");
       },
       version: 1,
     );
@@ -20,8 +20,8 @@ class DatabaseHandler {
     final Database db = await initializeDB();
     for (var student in todos) {
       result = await db.rawInsert(
-          'insert into todos(name, desc, state) values (?,?,?)',
-          [student.name, student.desc, 0]);
+          'insert into todos(name, desc, state, datetime) values (?,?,?,?)',
+          [student.name, student.desc, 0, DateTime.now().toString()]);
     }
     return result;
   }
@@ -43,8 +43,14 @@ class DatabaseHandler {
     final Database db = await initializeDB();
     for (var student in todos) {
       result = await db.rawUpdate(
-          'update todos set name = ?, desc = ?, state = ? where id = ?',
-          [student.name, student.desc, student.state, student.id]);
+          'update todos set name = ?, desc = ?, state = ?, datetime = ? where id = ?',
+          [
+            student.name,
+            student.desc,
+            student.state,
+            DateTime.now().toString(),
+            student.id
+          ]);
     }
     return result;
   }

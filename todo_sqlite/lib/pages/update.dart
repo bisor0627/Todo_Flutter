@@ -29,7 +29,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     nameController.text = Repo.todoData.name;
     descController.text = Repo.todoData.desc;
@@ -45,7 +44,7 @@ class _UpdateTodosState extends State<UpdateTodos> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -59,7 +58,7 @@ class _UpdateTodosState extends State<UpdateTodos> {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -75,19 +74,19 @@ class _UpdateTodosState extends State<UpdateTodos> {
                 ],
               ),
             ),
-            Divider(
+            const Divider(
               indent: 16,
               endIndent: 16,
               color: black55,
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Expanded(
                     child: Text(
-                      'Due',
+                      Repo.todoData.datetime.toString(),
                       style: subtitle1,
                     ),
                   ),

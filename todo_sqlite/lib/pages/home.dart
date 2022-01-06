@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                         return const InsertTodos();
                       })).then((value) => reloadData());
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.add,
                       size: 40,
                     ),
@@ -125,8 +125,9 @@ class _HomePageState extends State<HomePage> {
                               background: Container(
                                 color: Colors.red,
                                 alignment: Alignment.centerRight,
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Icon(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: const Icon(
                                   Icons.delete_forever,
                                   size: 30,
                                   color: Colors.white,
@@ -149,9 +150,8 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Expanded(
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16, 0, 0, 0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16, 0, 0, 0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -164,8 +164,9 @@ class _HomePageState extends State<HomePage> {
                                                   style: title2,
                                                 ),
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(0, 4, 0, 0),
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(0, 4, 0, 0),
                                                   child: Text(
                                                     snapshot.data![index].desc,
                                                     style: bodyText2.override(
@@ -187,8 +188,9 @@ class _HomePageState extends State<HomePage> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 0, 12, 0),
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 0, 12, 0),
                                               child: IconButton(
                                                 onPressed: () {
                                                   updateStateTodo(
@@ -220,7 +222,9 @@ class _HomePageState extends State<HomePage> {
                                           id: snapshot.data![index].id,
                                           name: snapshot.data![index].name,
                                           desc: snapshot.data![index].desc,
-                                          state: snapshot.data![index].state),
+                                          state: snapshot.data![index].state,
+                                          datetime:
+                                              snapshot.data![index].datetime),
                                     );
                                   })).then(
                                       (value) => updateTodo(Repo.todoData));
@@ -228,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                               ));
                         });
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -251,7 +255,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future updateTodo(Todos todo) async {
-    print(todo);
+    DateTime dateTime = DateTime.now();
+    print(dateTime);
     await handler.updateTodos([todo]);
     return reloadData();
   }
