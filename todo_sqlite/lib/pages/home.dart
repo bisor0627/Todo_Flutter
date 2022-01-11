@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_sqlite/config/constant.dart';
+import 'package:todo_sqlite/pages/calendar.dart';
 import 'package:todo_sqlite/pages/insert.dart';
 import 'package:todo_sqlite/pages/update.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
+import 'package:todo_sqlite/widget/customCalendar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,20 +22,41 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     handler = DatabaseHandler();
+    searchFieldController = TextEditingController();
     // Temp Action
     handler.initializeDB().whenComplete(() async {
       setState(() {});
     });
-    searchFieldController = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: black77,
       appBar: AppBar(
         backgroundColor: primarycolor,
         automaticallyImplyLeading: false,
+        leading: PopupMenuButton(
+          onSelected: (item) => menuBtnSelected(context, item),
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              child: Text("캘린더"),
+              value: 0,
+            ),
+            PopupMenuItem(
+              child: Text("한 주 보기"),
+              value: 1,
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const InsertTodos();
+                })).then((value) => reloadData());
+              },
+              icon: const Icon(Icons.add))
+        ],
         title: Text(
           'My Tasks',
           style: title2,
@@ -43,74 +66,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          Material(
-            color: Colors.transparent,
-            elevation: 3,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 60,
-              decoration: const BoxDecoration(
-                color: primarycolor,
-              ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(20, 4, 20, 4),
-                child: Row(children: [
-                  Expanded(
-                    // flex: 7,
-                    child: TextFormField(
-                      controller: searchFieldController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        labelText: '당신의 기록을 검색하세요...',
-                        labelStyle: bodyText1.override(
-                          fontFamily: 'Lexend Deca',
-                          color: const Color(0xFF95A1AC),
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFF262D34),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFF262D34),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.search_rounded,
-                          color: Color(0xFF95A1AC),
-                        ),
-                      ),
-                      style: bodyText1.override(
-                        fontFamily: 'Lexend Deca',
-                        color: const Color(0xFF95A1AC),
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const InsertTodos();
-                      })).then((value) => reloadData());
-                    },
-                    child: const Icon(
-                      Icons.add,
-                      size: 40,
-                    ),
-                  )
-                ]),
-              ),
-            ),
-          ),
           Expanded(
             child: FutureBuilder(
                 future: handler.queryTodos(),
@@ -159,9 +114,22 @@ class _HomePageState extends State<HomePage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  snapshot.data![index].name,
-                                                  style: title2,
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      snapshot
+                                                          .data![index].name,
+                                                      style: title2,
+                                                    ),
+                                                    Text(
+                                                      Repo.todoData.id
+                                                          .toString(),
+                                                      style: subtitle1,
+                                                    ),
+                                                  ],
                                                 ),
                                                 Padding(
                                                   padding:
@@ -247,6 +215,23 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       handler.queryTodos();
     });
+  }
+
+  void menuBtnSelected(BuildContext context, Object? item) {
+    switch (item) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return CalendarPage();
+        })).then((value) => updateTodo(Repo.todoData));
+        break;
+      case 1:
+        print("clicked item 1");
+        break;
+      case 2:
+        print("clicked item 2");
+        break;
+      default:
+    }
   }
 
   Future updateStateTodo(int? id, int state) async {
