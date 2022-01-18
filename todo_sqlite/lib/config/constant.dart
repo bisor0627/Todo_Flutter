@@ -18,6 +18,7 @@ const Color black55 = Color(0xFF555555);
 const Color black77 = Color(0xFF777777);
 const Color softgray = Color(0xFFaaaaaa);
 const Color softblue = Color(0xff01aed6);
+const Color simplewhite = Color(0xffffffff);
 
 const int statusOk = 200;
 const int statusBadRequst = 400;

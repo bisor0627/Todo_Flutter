@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
+import 'package:intl/intl.dart';
 
 class InsertTodos extends StatefulWidget {
   const InsertTodos({Key? key}) : super(key: key);
@@ -13,17 +16,34 @@ class InsertTodos extends StatefulWidget {
 
 class _InsertTodoState extends State<InsertTodos> {
   late DatabaseHandler handler;
-  late DateTime datePicked;
+  late DateTime? _selectedTime;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController descController = TextEditingController();
 
-  late String name;
-  late String desc;
+  late StreamController<String> nameStreamController;
+  late StreamController<String> descStreamController;
 
   @override
   void initState() {
     super.initState();
     handler = DatabaseHandler();
+    _selectedTime = DateTime.now();
+    nameStreamController = StreamController<String>.broadcast();
+    descStreamController = StreamController<String>.broadcast();
+
+    nameController.addListener(() {
+      nameStreamController.sink.add(nameController.text.trim());
+    });
+
+    descController.addListener(() {
+      descStreamController.sink.add(nameController.text.trim());
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -166,17 +186,37 @@ class _InsertTodoState extends State<InsertTodos> {
                           width: 1,
                         ),
                       ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(10, 14, 0, 0),
-                        child: Text(
-                          // dateTimeFormat('MMMEd', datePicked),
-                          "Sample",
-                          style: bodyText1.override(
-                            fontFamily: 'Lexend Deca',
-                            color: tertiaryColor,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14,
+                      child: GestureDetector(
+                        onTap: () {
+                          Future<DateTime?> selectedDate = showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(), // 초깃값
+                            firstDate: DateTime(2018), // 시작일
+                            lastDate: DateTime(2030), // 마지막일
+                            // builder: (BuildContext context, Widget? child) {
+                            //   return Theme(
+                            //     data: ThemeData.dark(), // 다크테마
+                            //   );
+                            // },
+                          );
+
+                          selectedDate.then((dateTime) {
+                            setState(() {
+                              _selectedTime = dateTime;
+                            });
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              16, 16, 16, 0),
+                          child: Text(
+                            DateFormat.yMMMd().format(_selectedTime!),
+                            style: bodyText1.override(
+                              fontFamily: 'Lexend Deca',
+                              color: tertiaryColor,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
@@ -222,8 +262,7 @@ class _InsertTodoState extends State<InsertTodos> {
         name: nameController.text,
         desc: descController.text,
         state: 0,
-        datetime: DateTime.now());
-
+        datetime: _selectedTime!);
     return await handler.insertTodos([firstTodo]);
   }
 } // _InsertTodoState

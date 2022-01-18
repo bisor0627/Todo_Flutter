@@ -71,7 +71,7 @@ class _SplashPageState extends State<SplashPage> {
         return Future.value(false);
       },
       child: Container(
-        color: black21,
+        color: Colors.white,
         child: Center(
           child: Image.asset('assets/images/logo_dark.png', height: 200),
         ),

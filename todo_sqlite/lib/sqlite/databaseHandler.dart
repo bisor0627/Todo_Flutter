@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:todo_sqlite/util.dart';
 import 'todos.dart';
 
 class DatabaseHandler {
@@ -9,7 +10,7 @@ class DatabaseHandler {
       join(path, 'todo.db'),
       onCreate: (database, version) async {
         await database.execute(
-            "create table todos(id integer primary key autoincrement, name text, desc text, state integer, datetime text)");
+            "create table todos(id integer primary key autoincrement, name text, desc text, state integer, datetime integer)");
       },
       version: 1,
     );
@@ -18,10 +19,15 @@ class DatabaseHandler {
   Future<int> insertTodos(List<Todos> todos) async {
     int result = 0;
     final Database db = await initializeDB();
-    for (var student in todos) {
+
+    for (var todo in todos) {
       result = await db.rawInsert(
-          'insert into todos(name, desc, state, datetime) values (?,?,?,?)',
-          [student.name, student.desc, 0, DateTime.now().toString()]);
+          'insert into todos(name, desc, state, datetime) values (?,?,?,?)', [
+        todo.name,
+        todo.desc,
+        0,
+        dateTimeFormat("yyyy-MM-dd HH:mm:ss", todo.datetime)
+      ]);
     }
     return result;
   }
@@ -41,15 +47,15 @@ class DatabaseHandler {
   Future<int> updateTodos(List<Todos> todos) async {
     int result = 0;
     final Database db = await initializeDB();
-    for (var student in todos) {
+    for (var todo in todos) {
       result = await db.rawUpdate(
           'update todos set name = ?, desc = ?, state = ?, datetime = ? where id = ?',
           [
-            student.name,
-            student.desc,
-            student.state,
-            DateTime.now().toString(),
-            student.id
+            todo.name,
+            todo.desc,
+            todo.state,
+            dateTimeFormat("yyyy-MM-dd HH:mm:ss", todo.datetime),
+            todo.id
           ]);
     }
     return result;

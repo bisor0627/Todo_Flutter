@@ -17,7 +17,7 @@ class Todos {
         name = res['name'],
         desc = res['desc'],
         state = res['state'],
-        datetime = DateTime.parse(res['datetime']);
+        datetime = DateTime.parse(res['datetime'].toString());
 
   Map<String, Object?> toMap() {
     return {
