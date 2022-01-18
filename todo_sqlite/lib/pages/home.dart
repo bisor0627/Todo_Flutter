@@ -124,11 +124,11 @@ class _HomePageState extends State<HomePage> {
                                                           .data![index].name,
                                                       style: title2,
                                                     ),
-                                                    Text(
-                                                      Repo.todoData.id
-                                                          .toString(),
-                                                      style: subtitle1,
-                                                    ),
+                                                    // Text(
+                                                    //   Repo.todoData.id
+                                                    //       .toString(),
+                                                    //   style: subtitle1,
+                                                    // ),
                                                   ],
                                                 ),
                                                 Padding(
