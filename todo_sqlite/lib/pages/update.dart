@@ -82,7 +82,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
                   padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: TextFormField(
                     controller: nameController,
-                    obscureText: false,
                     decoration: InputDecoration(
                       labelText: "Task title",
                       labelStyle: bodyText1.override(
@@ -105,8 +104,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      filled: true,
-                      fillColor: black55,
                     ),
                     style: bodyText1,
                   ),
@@ -115,7 +112,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
                   padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
                   child: TextFormField(
                     controller: descController,
-                    obscureText: false,
                     decoration: InputDecoration(
                       labelText: "description",
                       labelStyle: bodyText1.override(
@@ -145,8 +141,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      filled: true,
-                      fillColor: black55,
                     ),
                     style: bodyText1,
                     textAlign: TextAlign.start,
@@ -161,7 +155,6 @@ class _UpdateTodosState extends State<UpdateTodos> {
                       width: MediaQuery.of(context).size.width * 0.92,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: black55,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: black55,
