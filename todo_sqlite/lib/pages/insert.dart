@@ -18,7 +18,7 @@ class InsertTodos extends StatefulWidget {
 class _InsertTodoState extends State<InsertTodos> {
   _InsertTodoState(Todos? rtodo);
 // ! Variable -------------------------------
-  late DatabaseHandler handler;
+  late var handler = DatabaseHandler();
   late DateTime? _selectedTime;
 
   FocusNode nameFocus = FocusNode();
@@ -331,7 +331,6 @@ class _InsertTodoState extends State<InsertTodos> {
   @override
   void initState() {
     super.initState();
-    handler = DatabaseHandler();
     controllerActions();
 
     if (widget.rtodo != null) {

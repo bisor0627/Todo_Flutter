@@ -164,12 +164,6 @@ class _HomePageState extends State<HomePage> {
           color: Colors.tealAccent,
           fontSize: 16,
         ),
-        // onCalendarChanged: (DateTime date) {
-        //   setState(() {
-        //     _targetDateTime = date;
-        //     _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-        //   });
-        // },
         onDayLongPressed: (DateTime date) {
           print('long pressed date $date');
         },
