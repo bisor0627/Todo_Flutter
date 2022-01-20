@@ -3,7 +3,7 @@ import 'package:todo_sqlite/classes/event.dart';
 import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/flutter_calendar_carousel.dart';
 import 'package:todo_sqlite/pages/insert.dart';
-import 'package:todo_sqlite/pages/update.dart';
+// import 'package:todo_sqlite/pages/update.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
 import 'package:intl/intl.dart';
@@ -41,12 +41,14 @@ class _HomePageState extends State<HomePage> {
     final calendarCarouselNoHeader = CalendarCarousel<Event>(
       todayBorderColor: Colors.green,
       onDayPressed: (date, events) {
-        this.setState(() => _currentDate = date);
-        events.forEach((event) => print(event.title));
+        setState(() => _currentDate = date);
+        for (var event in events) {
+          print(event.title);
+        }
       },
       daysHaveCircularBorder: true,
       showOnlyCurrentMonthDate: false,
-      weekendTextStyle: TextStyle(
+      weekendTextStyle: const TextStyle(
         color: Colors.red,
       ),
       thisMonthDayBorderColor: Colors.grey,
@@ -55,40 +57,33 @@ class _HomePageState extends State<HomePage> {
       height: 420.0,
       selectedDateTime: _currentDate,
       targetDateTime: _targetDateTime,
-      customGridViewPhysics: NeverScrollableScrollPhysics(),
+      customGridViewPhysics: const NeverScrollableScrollPhysics(),
       markedDateCustomShapeBorder:
-          CircleBorder(side: BorderSide(color: Colors.yellow)),
-      markedDateCustomTextStyle: TextStyle(
+          const CircleBorder(side: BorderSide(color: Colors.yellow)),
+      markedDateCustomTextStyle: const TextStyle(
         fontSize: 18,
         color: Colors.blue,
       ),
       showHeader: false,
-      todayTextStyle: TextStyle(
+      todayTextStyle: const TextStyle(
         color: Colors.blue,
       ),
-      // markedDateShowIcon: true,
-      // markedDateIconMaxShown: 2,
-      // markedDateIconBuilder: (event) {
-      //   return event.icon;
-      // },
-      // markedDateMoreShowTotal:
-      //     true,
       todayButtonColor: Colors.yellow,
-      selectedDayTextStyle: TextStyle(
+      selectedDayTextStyle: const TextStyle(
         color: Colors.yellow,
       ),
-      minSelectedDate: _currentDate.subtract(Duration(days: 360)),
-      maxSelectedDate: _currentDate.add(Duration(days: 360)),
-      prevDaysTextStyle: TextStyle(
+      minSelectedDate: _currentDate.subtract(const Duration(days: 360)),
+      maxSelectedDate: _currentDate.add(const Duration(days: 360)),
+      prevDaysTextStyle: const TextStyle(
         fontSize: 16,
         color: Colors.pinkAccent,
       ),
-      inactiveDaysTextStyle: TextStyle(
+      inactiveDaysTextStyle: const TextStyle(
         color: Colors.tealAccent,
         fontSize: 16,
       ),
       onCalendarChanged: (DateTime date) {
-        this.setState(() {
+        setState(() {
           _targetDateTime = date;
           _currentMonth = DateFormat.yMMM().format(_targetDateTime);
         });
@@ -127,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   _currentMonth,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.0,
                   ),
@@ -136,7 +131,7 @@ class _HomePageState extends State<HomePage> {
               Row(
                 children: [
                   TextButton(
-                    child: Text('PREV'),
+                    child: const Text('PREV'),
                     onPressed: () {
                       setState(() {
                         _targetDateTime = DateTime(
@@ -147,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   TextButton(
-                    child: Text('NEXT'),
+                    child: const Text('NEXT'),
                     onPressed: () {
                       setState(() {
                         _targetDateTime = DateTime(
@@ -291,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return UpdateTodos(
+                                    return InsertTodos(
                                       rtodo: Todos(
                                           id: snapshot.data![index].id,
                                           name: snapshot.data![index].name,

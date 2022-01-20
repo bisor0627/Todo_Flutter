@@ -8,14 +8,16 @@ import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
 
 class InsertTodos extends StatefulWidget {
-  const InsertTodos({Key? key}) : super(key: key);
+  final Todos? rtodo;
+  const InsertTodos({Key? key, this.rtodo}) : super(key: key);
 
   @override
-  _InsertTodoState createState() => _InsertTodoState();
+  _InsertTodoState createState() => _InsertTodoState(rtodo);
 }
 
 class _InsertTodoState extends State<InsertTodos> {
-// ! Variable
+  _InsertTodoState(Todos? rtodo);
+// ! Variable -------------------------------
   late DatabaseHandler handler;
   late DateTime? _selectedTime;
 
@@ -29,7 +31,7 @@ class _InsertTodoState extends State<InsertTodos> {
   late StreamController<String> descStreamController;
   late StreamController<bool> btnStreamController;
 
-// ! Actions
+// ! Actions -------------------------------
   Future<int> addTodo() async {
     Todos firstTodo = Todos(
         name: nameController.text,
@@ -39,10 +41,20 @@ class _InsertTodoState extends State<InsertTodos> {
     return await handler.insertTodos([firstTodo]);
   }
 
+  Future<int> updateTodo() async {
+    Todos firstTodo = Todos(
+        id: widget.rtodo?.id,
+        name: nameController.text,
+        desc: descController.text,
+        state: widget.rtodo!.state,
+        datetime: _selectedTime!);
+    return await handler.updateTodos([firstTodo]);
+  }
+
   void controllerActions() {
     nameStreamController = StreamController<String>.broadcast();
     descStreamController = StreamController<String>.broadcast();
-    btnStreamController = StreamController<bool>.broadcast();
+    btnStreamController = StreamController<bool>();
 
     nameController.addListener(() {
       nameStreamController.sink.add(nameController.text.trim());
@@ -65,7 +77,7 @@ class _InsertTodoState extends State<InsertTodos> {
   }
 
   void addTaskAction() async {
-    addTodo();
+    _nowQueryType ? updateTodo() : addTodo();
     Navigator.pop(context);
   }
 
@@ -84,7 +96,7 @@ class _InsertTodoState extends State<InsertTodos> {
     }
   }
 
-// ! Widgets
+// ! Widgets -------------------------------
   List<Widget> _drawTitle() {
     return [
       Padding(
@@ -93,7 +105,7 @@ class _InsertTodoState extends State<InsertTodos> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              'Add Task',
+              _nowQueryType ? 'Update Task' : 'Add Task',
               style: title2,
             ),
           ],
@@ -291,19 +303,21 @@ class _InsertTodoState extends State<InsertTodos> {
             child: StreamBuilder<bool>(
                 stream: btnStreamController.stream,
                 builder: (context, snapshot) {
-                  // if (snapshot.connectionState == ConnectionState.none) {
-                  return ElevatedButton(
-                      onPressed: snapshot.data == null
-                          ? null
-                          : snapshot.data!
-                              ? () {
-                                  addTaskAction();
-                                }
-                              : null,
-                      child: const Text("Creat Task"));
-                  // } else {
-                  // return Text("no");
-                  // }
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    return ElevatedButton(
+                        onPressed: snapshot.data == null
+                            ? null
+                            : snapshot.data!
+                                ? () {
+                                    addTaskAction();
+                                  }
+                                : null,
+                        child:
+                            Text(_nowQueryType ? "Update Task" : "Creat Task"));
+                  } else {
+                    return const ElevatedButton(
+                        onPressed: null, child: Text("Now loading..."));
+                  }
                 }),
           ),
         ],
@@ -311,13 +325,26 @@ class _InsertTodoState extends State<InsertTodos> {
     );
   }
 
-// ! Builds
+// ! Builds -------------------------------
+  late bool _nowQueryType;
+
   @override
   void initState() {
     super.initState();
     handler = DatabaseHandler();
-    _selectedTime = DateTime.now();
     controllerActions();
+
+    if (widget.rtodo != null) {
+      // update root
+      _nowQueryType = true;
+      _selectedTime = widget.rtodo?.datetime;
+      nameController.text = widget.rtodo!.name;
+      descController.text = widget.rtodo!.desc;
+    } else {
+      // insert root
+      _nowQueryType = false;
+      _selectedTime = DateTime.now();
+    }
   }
 
   @override
