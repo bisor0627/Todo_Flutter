@@ -27,7 +27,8 @@ class _InsertTodoState extends State<InsertTodos> {
 
   late StreamController<String> nameStreamController;
   late StreamController<String> descStreamController;
-  late StreamController<bool> btnStreamController;
+late btnStreamController = StreamController<bool>();
+  late Stream<int> testStream = countStream(30);
 
 // ! Actions
   Future<int> addTodo() async {
@@ -39,20 +40,39 @@ class _InsertTodoState extends State<InsertTodos> {
     return await handler.insertTodos([firstTodo]);
   }
 
+  Stream<int> countStream(int to) async* {
+    for (int i = 1; i <= to; i++) {
+      await Future.delayed(Duration(seconds: 1));
+      yield i;
+    }
+  }
+
+  Stream<bool> btnStream(int to) async* {
+    bool state = false;
+    nameController.addListener(() {
+      state = descController.text.trim().isNotEmpty &&
+          nameController.text.trim().isNotEmpty;
+    });
+    descController.addListener(() {
+      state = descController.text.trim().isNotEmpty &&
+          nameController.text.trim().isNotEmpty;
+    });
+    yield state;
+  }
+
   void controllerActions() {
     nameStreamController = StreamController<String>.broadcast();
     descStreamController = StreamController<String>.broadcast();
-    btnStreamController = StreamController<bool>.broadcast();
-
+    
     nameController.addListener(() {
       nameStreamController.sink.add(nameController.text.trim());
-      btnStreamController.sink.add(descController.text.trim().isNotEmpty &&
-          nameController.text.trim().isNotEmpty);
+      // btnStreamController.sink.add(descController.text.trim().isNotEmpty &&
+      // nameController.text.trim().isNotEmpty);
     });
     descController.addListener(() {
       descStreamController.sink.add(descController.text.trim());
-      btnStreamController.sink.add(descController.text.trim().isNotEmpty &&
-          nameController.text.trim().isNotEmpty);
+      // btnStreamController.sink.add(descController.text.trim().isNotEmpty &&
+      // nameController.text.trim().isNotEmpty);
     });
   }
 
@@ -77,8 +97,6 @@ class _InsertTodoState extends State<InsertTodos> {
       } else {
         return Colors.blueAccent;
       }
-    } else if (focus.hasFocus && text.isEmpty) {
-      return black55;
     } else {
       return black55;
     }
@@ -117,7 +135,12 @@ class _InsertTodoState extends State<InsertTodos> {
             ),
           ],
         ),
-      )
+      ),
+      StreamBuilder(
+          stream: testStream,
+          builder: (context, snapshot) {
+            return Text(snapshot.toString());
+          })
     ];
   }
 
@@ -349,4 +372,3 @@ class _InsertTodoState extends State<InsertTodos> {
     );
   }
 } // _InsertTodoState
-
