@@ -1,9 +1,9 @@
 class Todos {
   int? id;
-  String name;
-  String desc;
+  late String name;
+  late String desc;
   late int state;
-  DateTime datetime;
+  late DateTime datetime;
 
   Todos(
       {this.id,
@@ -12,12 +12,13 @@ class Todos {
       required this.state,
       required this.datetime});
 
-  Todos.fromMap(Map<String, dynamic> res)
-      : id = res['id'],
-        name = res['name'],
-        desc = res['desc'],
-        state = res['state'],
-        datetime = DateTime.parse(res['datetime'].toString());
+  Todos.fromMap(Map<String, dynamic> res) {
+    id = res['id'];
+    name = res['name'];
+    desc = res['desc'];
+    state = res['state'];
+    datetime = DateTime.parse(res['datetime'].toString());
+  }
 
   Map<String, Object?> toMap() {
     return {

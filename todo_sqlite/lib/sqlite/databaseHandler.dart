@@ -4,6 +4,12 @@ import 'package:todo_sqlite/util.dart';
 import 'todos.dart';
 
 class DatabaseHandler {
+  static final DatabaseHandler _instance = DatabaseHandler._internal();
+  factory DatabaseHandler() => _instance;
+  DatabaseHandler._internal() {
+    initializeDB();
+  }
+
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
@@ -26,7 +32,7 @@ class DatabaseHandler {
         todo.name,
         todo.desc,
         0,
-        dateTimeFormat("yyyy-MM-dd HH:mm:ss", todo.datetime)
+        dateTimeFormat("yyyy-MM-dd", todo.datetime)
       ]);
     }
     return result;
@@ -36,6 +42,16 @@ class DatabaseHandler {
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult =
         await db.rawQuery('select * from todos');
+    return queryResult.map((e) => Todos.fromMap(e)).toList();
+  }
+
+  Future<List<Todos>> queryDateTodos(DateTime date) async {
+    final Database db = await initializeDB();
+    final List<Map<String, Object?>> queryResult = await db.rawQuery(
+        'select * from todos where datetime = ?',
+        [dateTimeFormat("yyyy-MM-dd", date)]);
+
+    queryResult.map((e) => print);
     return queryResult.map((e) => Todos.fromMap(e)).toList();
   }
 
@@ -54,7 +70,7 @@ class DatabaseHandler {
             todo.name,
             todo.desc,
             todo.state,
-            dateTimeFormat("yyyy-MM-dd HH:mm:ss", todo.datetime),
+            dateTimeFormat("yyyy-MM-dd", todo.datetime),
             todo.id
           ]);
     }
