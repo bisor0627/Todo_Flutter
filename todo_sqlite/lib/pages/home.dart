@@ -5,7 +5,6 @@ import 'package:todo_sqlite/classes/event.dart';
 import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/flutter_calendar_carousel.dart';
 import 'package:todo_sqlite/pages/insert.dart';
-// import 'package:todo_sqlite/pages/update.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
 import 'package:intl/intl.dart';
@@ -19,26 +18,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TodoCalendar todoCalendar = TodoCalendar(title: "title");
+  // sqlite
   late var handler = DatabaseHandler();
-  DateTime _currentDate = DateTime.now();
-  String _currentMonth = DateFormat.yMMM().format(DateTime.now());
-  late DateTime _targetDateTime;
-  late StreamController<List<Todos>> todoListStreamController;
 
-  late TextEditingController searchFieldController;
-// !-------------------------------Action------------------------------------
+  // Calendar
+  TodoCalendar todoCalendar = TodoCalendar(title: "title");
+  DateTime _currentDate = DateTime.now(); // 오늘 날짜
+  String _currentMonth = DateFormat.yMMM().format(DateTime.now()); // 현재 월
+  late DateTime _targetDateTime; // 선택한 날짜
 
-  Stream updateStateTodo(int? id, int state) async* {
+  // ListView
+  StreamController<List<Todos>> listStreamController =
+      StreamController.broadcast();
+
+  // Delete
+  final List<int> _delTodosID = [];
+  //Stream
+
+// !-------------------------------Method------------------------------------
+
+  Future updateStateTodo(int? id, int state) async {
     await handler.updateState(id, state);
   }
 
-// !-------------------------------Build------------------------------------
+  Future multiDeleteTodos(List<int> ids) async {
+    await handler.deleteMutiTodos(ids);
+  }
+
+  Future insertDeleteList(int index) async {
+    if (_delTodosID.contains(index)) {
+      _delTodosID.remove(index);
+    } else {
+      _delTodosID.add(index);
+    }
+  }
+
+// !--------------------------------Cycle-------------------------------------
   @override
   void initState() {
     super.initState();
     _targetDateTime = DateTime.now();
-    searchFieldController = TextEditingController();
+    listStreamController.addStream(handler.queryDateTodos(_targetDateTime));
   }
 
   @override
@@ -50,29 +70,44 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: mainAppbar(),
-      body: Column(
-        children: [
-          calendarHeader(),
-          calendarCarouselNoHeader(),
-          todoListView()
-        ],
+      body: GestureDetector(
+        onTap: () {},
+        child: Column(
+          children: [
+            calendarHeader(),
+            calendarCarouselNoHeader(),
+            todoListView()
+          ],
+        ),
       ),
     );
   }
 
-// !-------------------------------Widget------------------------------------
+// !---------------------------------Widget------------------------------------
   AppBar mainAppbar() => AppBar(
         backgroundColor: primarycolor,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+              onPressed: () async {
+                await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
                   return const InsertTodos();
                 }));
+                listStreamController
+                    .addStream(handler.queryDateTodos(_targetDateTime));
               },
               icon: const Icon(Icons.add))
         ],
+        leading: IconButton(
+          icon: Icon(Icons.delete_forever),
+          onPressed: () async {
+            await multiDeleteTodos(_delTodosID);
+            _delTodosID.clear();
+            listStreamController
+                .addStream(handler.queryDateTodos(_targetDateTime));
+          },
+        ),
         title: Text(
           'My Tasks',
           style: title2,
@@ -123,10 +158,11 @@ class _HomePageState extends State<HomePage> {
   Widget calendarCarouselNoHeader() => CalendarCarousel<Event>(
         todayBorderColor: Colors.green,
         onDayPressed: (date, events) {
-          setState(() {
-            _targetDateTime = date;
-            _currentDate = date;
-          });
+          _targetDateTime = date;
+          _currentDate = date;
+
+          listStreamController
+              .addStream(handler.queryDateTodos(_targetDateTime));
         },
         daysHaveCircularBorder: true,
         showOnlyCurrentMonthDate: false,
@@ -164,20 +200,13 @@ class _HomePageState extends State<HomePage> {
           color: Colors.tealAccent,
           fontSize: 16,
         ),
-        onDayLongPressed: (DateTime date) {
-          print('long pressed date $date');
-        },
       );
 
   Widget todoListView() => Expanded(
-        child: FutureBuilder<List<Todos>>(
-            future: handler.queryDateTodos(_targetDateTime),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Todos>> snapshot) {
-              if (snapshot.hasData) {
-                print(
-                    "${snapshot.data?.length}   ${snapshot.connectionState} ${_targetDateTime}");
-
+        child: StreamBuilder<List<Todos>>(
+            stream: listStreamController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
                 return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -258,37 +287,54 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 0, 12, 0),
-                                          child: IconButton(
-                                            onPressed: () {
-                                              updateStateTodo(
-                                                  snapshot.data![index].id,
-                                                  snapshot.data![index].state);
-                                            },
-                                            icon: Icon(
-                                              snapshot.data![index].state == 0
-                                                  ? Icons.radio_button_off
-                                                  : Icons.check_circle,
-                                              color: primarycolor,
-                                              size: 25,
-                                            ),
-                                          ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 0, 12, 0),
+                                      child: IconButton(
+                                        onPressed: () async {
+                                          await updateStateTodo(
+                                              snapshot.data![index].id,
+                                              snapshot.data![index].state);
+                                          listStreamController.addStream(handler
+                                              .queryDateTodos(_targetDateTime));
+                                        },
+                                        icon: Icon(
+                                          snapshot.data![index].state == 0
+                                              ? Icons.radio_button_off
+                                              : Icons.check_circle,
+                                          color: primarycolor,
+                                          size: 25,
                                         ),
-                                      ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 0, 12, 0),
+                                      child: IconButton(
+                                        onPressed: () async {
+                                          await insertDeleteList(
+                                              snapshot.data![index].id!);
+                                          listStreamController.addStream(handler
+                                              .queryDateTodos(_targetDateTime));
+                                        },
+                                        icon: Icon(
+                                          _delTodosID.contains(
+                                                  snapshot.data![index].id)
+                                              ? Icons.check_circle
+                                              : Icons.radio_button_off,
+                                          color: primarycolor,
+                                          size: 25,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            onTap: () {
-                              Navigator.push(context,
+                            onTap: () async {
+                              await Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return InsertTodos(
                                   rtodo: Todos(
@@ -299,13 +345,13 @@ class _HomePageState extends State<HomePage> {
                                       datetime: snapshot.data![index].datetime),
                                 );
                               }));
+                              listStreamController.addStream(
+                                  handler.queryDateTodos(_targetDateTime));
                             },
                           ));
                     });
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return Text("no data");
               }
             }),
       );

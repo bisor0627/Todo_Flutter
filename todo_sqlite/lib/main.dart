@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_sqlite/pages/home.dart';
 import 'package:todo_sqlite/pages/splash.dart';
 
 void main() {

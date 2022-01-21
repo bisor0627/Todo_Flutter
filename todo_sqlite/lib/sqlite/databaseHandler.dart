@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_sqlite/util.dart';
@@ -45,19 +47,26 @@ class DatabaseHandler {
     return queryResult.map((e) => Todos.fromMap(e)).toList();
   }
 
-  Future<List<Todos>> queryDateTodos(DateTime date) async {
+  Stream<List<Todos>> queryDateTodos(DateTime date) async* {
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult = await db.rawQuery(
         'select * from todos where datetime = ?',
         [dateTimeFormat("yyyy-MM-dd", date)]);
 
     queryResult.map((e) => print);
-    return queryResult.map((e) => Todos.fromMap(e)).toList();
+    yield queryResult.map((e) => Todos.fromMap(e)).toList();
   }
 
   Future<void> deleteTodos(int id) async {
     final Database db = await initializeDB();
     await db.rawDelete('delete from todos where id = ?', [id]);
+  }
+
+  Future<void> deleteMutiTodos(List<int> ids) async {
+    final Database db = await initializeDB();
+    for (int id in ids) {
+      await db.rawDelete('delete from todos where id = ?', [id]);
+    }
   }
 
   Future<int> updateTodos(List<Todos> todos) async {
