@@ -22,9 +22,12 @@ class _HomePageState extends State<HomePage> {
   late var handler = DatabaseHandler();
 
   // Calendar
+  StreamController<DateTime> calendarStreamController = StreamController();
   TodoCalendar todoCalendar = TodoCalendar(title: "title");
   DateTime _currentDate = DateTime.now(); // 오늘 날짜
   String _currentMonth = DateFormat.yMMM().format(DateTime.now()); // 현재 월
+  ValueNotifier<String> currentMonth =
+      ValueNotifier<String>(DateFormat.yMMM().format(DateTime.now()));
   late DateTime _targetDateTime; // 선택한 날짜
 
   // ListView
@@ -58,6 +61,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _targetDateTime = DateTime.now();
+
     listStreamController.addStream(handler.queryDateTodos(_targetDateTime));
   }
 
@@ -68,6 +72,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     return Scaffold(
       appBar: mainAppbar(),
       body: GestureDetector(
@@ -120,34 +125,46 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              _currentMonth,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.0,
-              ),
+            child: ValueListenableBuilder<String>(
+              valueListenable: currentMonth,
+              builder: (context, value, child) {
+                print("Value");
+                return Text(
+                  currentMonth.value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.0,
+                  ),
+                );
+              },
             ),
           ),
           Row(
             children: [
               TextButton(
                 child: const Text('PREV'),
-                onPressed: () {
-                  setState(() {
-                    _targetDateTime = DateTime(
-                        _targetDateTime.year, _targetDateTime.month - 1);
-                    _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-                  });
+                onPressed: () async {
+                  // setState(() {
+                  //   _targetDateTime = DateTime(
+                  //       _targetDateTime.year, _targetDateTime.month - 1);
+                  //   _currentMonth = DateFormat.yMMM().format(_targetDateTime);
+                  // });
+                  _targetDateTime =
+                      DateTime(_targetDateTime.year, _targetDateTime.month - 1);
+                  currentMonth.value =
+                      DateFormat.yMMM().format(_targetDateTime);
+                  calendarStreamController.sink.add(_targetDateTime);
                 },
               ),
               TextButton(
                 child: const Text('NEXT'),
-                onPressed: () {
-                  setState(() {
-                    _targetDateTime = DateTime(
-                        _targetDateTime.year, _targetDateTime.month + 1);
-                    _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-                  });
+                onPressed: () async {
+                  _targetDateTime =
+                      DateTime(_targetDateTime.year, _targetDateTime.month + 1);
+                  currentMonth.value =
+                      DateFormat.yMMM().format(_targetDateTime);
+
+                  calendarStreamController.sink.add(_targetDateTime);
                 },
               ),
             ],
@@ -155,52 +172,54 @@ class _HomePageState extends State<HomePage> {
         ],
       );
 
-  Widget calendarCarouselNoHeader() => CalendarCarousel<Event>(
-        todayBorderColor: Colors.green,
-        onDayPressed: (date, events) {
-          _targetDateTime = date;
-          _currentDate = date;
-
-          listStreamController
-              .addStream(handler.queryDateTodos(_targetDateTime));
-        },
-        daysHaveCircularBorder: true,
-        showOnlyCurrentMonthDate: false,
-        weekendTextStyle: const TextStyle(
-          color: Colors.red,
-        ),
-        thisMonthDayBorderColor: Colors.grey,
-        weekFormat: false,
-//      firstDayOfWeek: 4,
-        height: 420.0,
-        selectedDateTime: _currentDate,
-        targetDateTime: _targetDateTime,
-        customGridViewPhysics: const NeverScrollableScrollPhysics(),
-        markedDateCustomShapeBorder:
-            const CircleBorder(side: BorderSide(color: Colors.yellow)),
-        markedDateCustomTextStyle: const TextStyle(
-          fontSize: 18,
-          color: Colors.blue,
-        ),
-        showHeader: false,
-        todayTextStyle: const TextStyle(
-          color: Colors.blue,
-        ),
-        todayButtonColor: Colors.yellow,
-        selectedDayTextStyle: const TextStyle(
-          color: Colors.yellow,
-        ),
-        minSelectedDate: _currentDate.subtract(const Duration(days: 360)),
-        maxSelectedDate: _currentDate.add(const Duration(days: 360)),
-        prevDaysTextStyle: const TextStyle(
-          fontSize: 16,
-          color: Colors.pinkAccent,
-        ),
-        inactiveDaysTextStyle: const TextStyle(
-          color: Colors.tealAccent,
-          fontSize: 16,
-        ),
-      );
+  Widget calendarCarouselNoHeader() => StreamBuilder<DateTime>(
+      stream: calendarStreamController.stream,
+      builder: (context, snapshot) {
+        return CalendarCarousel<Event>(
+          todayBorderColor: Colors.green,
+          onDayPressed: (date, events) async {
+            await {_targetDateTime = date, _currentDate = date};
+            calendarStreamController.sink.add(_targetDateTime);
+            listStreamController
+                .addStream(handler.queryDateTodos(_targetDateTime));
+          },
+          daysHaveCircularBorder: true,
+          showOnlyCurrentMonthDate: false,
+          weekendTextStyle: const TextStyle(
+            color: Colors.red,
+          ),
+          thisMonthDayBorderColor: Colors.grey,
+          weekFormat: false,
+          height: 420.0,
+          selectedDateTime: _currentDate,
+          targetDateTime: _targetDateTime,
+          customGridViewPhysics: const NeverScrollableScrollPhysics(),
+          markedDateCustomShapeBorder:
+              const CircleBorder(side: BorderSide(color: Colors.yellow)),
+          markedDateCustomTextStyle: const TextStyle(
+            fontSize: 18,
+            color: Colors.blue,
+          ),
+          showHeader: false,
+          todayTextStyle: const TextStyle(
+            color: Colors.blue,
+          ),
+          todayButtonColor: Colors.yellow,
+          selectedDayTextStyle: const TextStyle(
+            color: Colors.yellow,
+          ),
+          minSelectedDate: _currentDate.subtract(const Duration(days: 360)),
+          maxSelectedDate: _currentDate.add(const Duration(days: 360)),
+          prevDaysTextStyle: const TextStyle(
+            fontSize: 16,
+            color: Colors.pinkAccent,
+          ),
+          inactiveDaysTextStyle: const TextStyle(
+            color: Colors.tealAccent,
+            fontSize: 16,
+          ),
+        );
+      });
 
   Widget todoListView() => Expanded(
         child: StreamBuilder<List<Todos>>(
@@ -288,6 +307,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     Padding(
+                                      // State Done Button
                                       padding:
                                           const EdgeInsetsDirectional.fromSTEB(
                                               0, 0, 12, 0),
@@ -309,6 +329,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     Padding(
+                                      // Delete Button
                                       padding:
                                           const EdgeInsetsDirectional.fromSTEB(
                                               0, 0, 12, 0),
@@ -322,10 +343,10 @@ class _HomePageState extends State<HomePage> {
                                         icon: Icon(
                                           _delTodosID.contains(
                                                   snapshot.data![index].id)
-                                              ? Icons.check_circle
-                                              : Icons.radio_button_off,
-                                          color: primarycolor,
-                                          size: 25,
+                                              ? Icons.delete_forever_rounded
+                                              : Icons.delete_forever_outlined,
+                                          color: Colors.red,
+                                          size: 30,
                                         ),
                                       ),
                                     ),
