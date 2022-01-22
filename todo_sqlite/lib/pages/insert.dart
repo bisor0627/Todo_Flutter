@@ -4,7 +4,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_sqlite/config/constant.dart';
-import 'package:todo_sqlite/pages/home.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
 
@@ -53,8 +52,8 @@ class _InsertTodoState extends State<InsertTodos> {
   }
 
   void controllerActions() {
-    nameStreamController = StreamController<String>.broadcast();
-    descStreamController = StreamController<String>.broadcast();
+    nameStreamController = StreamController<String>();
+    descStreamController = StreamController<String>();
     btnStreamController = StreamController<bool>();
 
     nameController.addListener(() {
@@ -140,6 +139,7 @@ class _InsertTodoState extends State<InsertTodos> {
       child: StreamBuilder(
           stream: nameStreamController.stream,
           builder: (context, snapshot) {
+            print(snapshot.data);
             return TextFormField(
               controller: nameController,
               focusNode: nameFocus,
