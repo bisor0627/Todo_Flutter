@@ -230,147 +230,123 @@ class _HomePageState extends State<HomePage> {
                 return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Dismissible(
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: const Icon(
-                              Icons.delete_forever,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                          ),
-                          key: ValueKey<int>(snapshot.data![index].id!),
-                          onDismissed: (DismissDirection direction) async {
-                            await handler
-                                .deleteTodos(snapshot.data![index].id!);
-                          },
-                          child: GestureDetector(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 0, 0, 0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
+                      return GestureDetector(
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16, 0, 0, 0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  snapshot.data![index].name,
-                                                  style: title2,
-                                                ),
-                                                Text(
-                                                  DateFormat.yMMMd().format(
-                                                      snapshot.data![index]
-                                                          .datetime),
-                                                  style: bodyText1.override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: tertiaryColor,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: 14,
-                                                  ),
-                                                )
-                                              ],
+                                            Text(
+                                              snapshot.data![index].name,
+                                              style: title2,
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(0, 4, 0, 0),
-                                              child: Text(
-                                                snapshot.data![index].desc,
-                                                style: bodyText2.override(
-                                                    fontFamily: 'Lexend Deca',
-                                                    color: primarycolor,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.normal),
+                                            Text(
+                                              DateFormat.yMMMd().format(snapshot
+                                                  .data![index].datetime),
+                                              style: bodyText1.override(
+                                                fontFamily: 'Lexend Deca',
+                                                color: tertiaryColor,
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 14,
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      // State Done Button
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 0, 12, 0),
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          await updateStateTodo(
-                                              snapshot.data![index].id,
-                                              snapshot.data![index].state);
-                                          listStreamController.addStream(handler
-                                              .queryDateTodos(_targetDateTime));
-                                        },
-                                        icon: Icon(
-                                          snapshot.data![index].state == 0
-                                              ? Icons.radio_button_off
-                                              : Icons.check_circle,
-                                          color: primarycolor,
-                                          size: 25,
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 4, 0, 0),
+                                          child: Text(
+                                            snapshot.data![index].desc,
+                                            style: bodyText2.override(
+                                                fontFamily: 'Lexend Deca',
+                                                color: primarycolor,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                    Padding(
-                                      // Delete Button
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0, 0, 12, 0),
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          await insertDeleteList(
-                                              snapshot.data![index].id!);
-                                          listStreamController.addStream(handler
-                                              .queryDateTodos(_targetDateTime));
-                                        },
-                                        icon: Icon(
-                                          _delTodosID.contains(
-                                                  snapshot.data![index].id)
-                                              ? Icons.delete_forever_rounded
-                                              : Icons.delete_forever_outlined,
-                                          color: Colors.red,
-                                          size: 30,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                Padding(
+                                  // State Done Button
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 12, 0),
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      await updateStateTodo(
+                                          snapshot.data![index].id,
+                                          snapshot.data![index].state);
+                                      listStreamController.addStream(handler
+                                          .queryDateTodos(_targetDateTime));
+                                    },
+                                    icon: Icon(
+                                      snapshot.data![index].state == 0
+                                          ? Icons.radio_button_off
+                                          : Icons.check_circle,
+                                      color: primarycolor,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  // Delete Button
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 12, 0),
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      await insertDeleteList(
+                                          snapshot.data![index].id!);
+                                      listStreamController.addStream(handler
+                                          .queryDateTodos(_targetDateTime));
+                                    },
+                                    icon: Icon(
+                                      _delTodosID.contains(
+                                              snapshot.data![index].id)
+                                          ? Icons.delete_forever_rounded
+                                          : Icons.delete_forever_outlined,
+                                      color: Colors.red,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            onTap: () async {
-                              await Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return InsertTodos(
-                                  rtodo: Todos(
-                                      id: snapshot.data![index].id,
-                                      name: snapshot.data![index].name,
-                                      desc: snapshot.data![index].desc,
-                                      state: snapshot.data![index].state,
-                                      datetime: snapshot.data![index].datetime),
-                                );
-                              }));
-                              listStreamController.addStream(
-                                  handler.queryDateTodos(_targetDateTime));
-                            },
-                          ));
+                          ),
+                        ),
+                        onTap: () async {
+                          await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return InsertTodos(
+                              rtodo: Todos(
+                                  id: snapshot.data![index].id,
+                                  name: snapshot.data![index].name,
+                                  desc: snapshot.data![index].desc,
+                                  state: snapshot.data![index].state,
+                                  datetime: snapshot.data![index].datetime),
+                            );
+                          }));
+                          listStreamController.addStream(
+                              handler.queryDateTodos(_targetDateTime));
+                        },
+                      );
                     });
               } else {
                 return Text("no data");
