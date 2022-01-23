@@ -35,8 +35,8 @@ class _HomePageState extends State<HomePage> {
       StreamController.broadcast();
 
   // Delete
+  ValueNotifier<bool> _deleteMode = ValueNotifier<bool>(false);
   final List<int> _delTodosID = [];
-  //Stream
 
 // !-------------------------------Method------------------------------------
 
@@ -105,14 +105,19 @@ class _HomePageState extends State<HomePage> {
               },
               icon: const Icon(Icons.add))
         ],
-        leading: IconButton(
-          icon: Icon(Icons.delete_forever),
-          onPressed: () async {
-            await multiDeleteTodos(_delTodosID);
-            _delTodosID.clear();
-            listStreamController
-                .addStream(handler.queryDateTodos(_targetDateTime));
-          },
+        leading: GestureDetector(
+          onLongPress: () => _deleteMode.value
+              ? _deleteMode.value = false
+              : _deleteMode.value = true,
+          child: IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: () async {
+              await multiDeleteTodos(_delTodosID);
+              _delTodosID.clear();
+              listStreamController
+                  .addStream(handler.queryDateTodos(_targetDateTime));
+            },
+          ),
         ),
         title: Text(
           'My Tasks',
@@ -129,7 +134,6 @@ class _HomePageState extends State<HomePage> {
             child: ValueListenableBuilder<String>(
               valueListenable: currentMonth,
               builder: (context, value, child) {
-                print("Value");
                 return Text(
                   currentMonth.value,
                   style: const TextStyle(
@@ -145,11 +149,6 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                 child: const Text('PREV'),
                 onPressed: () async {
-                  // setState(() {
-                  //   _targetDateTime = DateTime(
-                  //       _targetDateTime.year, _targetDateTime.month - 1);
-                  //   _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-                  // });
                   _targetDateTime =
                       DateTime(_targetDateTime.year, _targetDateTime.month - 1);
                   currentMonth.value =
@@ -230,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                 return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
+                      return InkWell(
                         child: Card(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -253,9 +252,12 @@ class _HomePageState extends State<HomePage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              snapshot.data![index].name,
-                                              style: title2,
+                                            Expanded(
+                                              child: Text(
+                                                snapshot.data![index].name,
+                                                style: title2,
+                                                maxLines: 1,
+                                              ),
                                             ),
                                             Text(
                                               DateFormat.yMMMd().format(snapshot
@@ -306,26 +308,36 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  // Delete Button
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      0, 0, 12, 0),
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      await insertDeleteList(
-                                          snapshot.data![index].id!);
-                                      listStreamController.addStream(handler
-                                          .queryDateTodos(_targetDateTime));
-                                    },
-                                    icon: Icon(
-                                      _delTodosID.contains(
-                                              snapshot.data![index].id)
-                                          ? Icons.delete_forever_rounded
-                                          : Icons.delete_forever_outlined,
-                                      color: Colors.red,
-                                      size: 30,
-                                    ),
-                                  ),
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: _deleteMode,
+                                  builder: (context, value, child) {
+                                    print(_deleteMode.value);
+                                    return Visibility(
+                                      visible: _deleteMode.value,
+                                      child: Padding(
+                                        // Delete Button
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0, 0, 12, 0),
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            await insertDeleteList(
+                                                snapshot.data![index].id!);
+                                            listStreamController.addStream(
+                                                handler.queryDateTodos(
+                                                    _targetDateTime));
+                                          },
+                                          icon: Icon(
+                                            _delTodosID.contains(
+                                                    snapshot.data![index].id)
+                                                ? Icons.delete_forever_rounded
+                                                : Icons.delete_forever_outlined,
+                                            color: Colors.red,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
