@@ -81,22 +81,22 @@ TextStyle get bodyText2 => GoogleFonts.getFont(
 
 extension TextStyleHelper on TextStyle {
   TextStyle override({
-    required String fontFamily,
-    required Color color,
-    required double fontSize,
-    required FontWeight fontWeight,
+    String? fontFamily,
+    Color? color,
+    double? fontSize,
+    FontWeight? fontWeight,
     bool useGoogleFonts = true,
   }) =>
       useGoogleFonts
           ? GoogleFonts.getFont(
-              fontFamily,
+              fontFamily ?? 'Lexend Deca',
               color: color,
               fontSize: fontSize,
               fontWeight: fontWeight,
               fontStyle: fontStyle,
             )
           : copyWith(
-              fontFamily: fontFamily,
+              fontFamily: fontFamily ?? 'Lexend Deca',
               color: color,
               fontSize: fontSize,
               fontWeight: fontWeight,

@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:todo_sqlite/config/constant.dart';
 import 'package:todo_sqlite/sqlite/databaseHandler.dart';
 import 'package:todo_sqlite/sqlite/todos.dart';
+import 'package:todo_sqlite/widget/button.dart';
+import 'package:todo_sqlite/widget/textfield.dart';
 
 class InsertTodos extends StatefulWidget {
   final Todos? rtodo;
@@ -18,8 +20,10 @@ class InsertTodos extends StatefulWidget {
 class _InsertTodoState extends State<InsertTodos> {
   _InsertTodoState(Todos? rtodo);
 // ! Variable -------------------------------
+  late bool _nowQueryType; // insert or update
+
   late var handler = DatabaseHandler();
-  late DateTime? _selectedTime;
+  late DateTime? _selectedTime; // 캘린더 선택 날짜
 
   FocusNode nameFocus = FocusNode();
   FocusNode descFocus = FocusNode();
@@ -135,143 +139,62 @@ class _InsertTodoState extends State<InsertTodos> {
 
   Widget _drawNameFIeld() {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-      child: StreamBuilder(
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+        child: SimpleTextField(
+          controller: nameController,
+          focusNode: nameFocus,
           stream: nameStreamController.stream,
-          builder: (context, snapshot) {
-            print(snapshot.data);
-            return TextFormField(
-              controller: nameController,
-              focusNode: nameFocus,
-              textInputAction: TextInputAction.go,
-              onChanged: (value) {},
-              onFieldSubmitted: (value) =>
-                  FocusScope.of(context).requestFocus(descFocus),
-              decoration: InputDecoration(
-                  labelText: "Task Name", //'Details'
-                  labelStyle: bodyText1.override(
-                    fontFamily: 'Lexend Deca',
-                    color: tertiaryColor,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
-                  hintText:
-                      "Enter your task here....", //'Enter a description here...'
-                  hintStyle: bodyText1.override(
-                    fontFamily: 'Lexend Deca',
-                    color: tertiaryColor,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: streamColor(snapshot.data, nameFocus),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: streamColor(snapshot.data, nameFocus),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  )),
-              style: bodyText1,
-            );
-          }),
-    );
+          labelText: "Task Name",
+          hintText: "Enter your task here....",
+        ));
   }
 
   Widget _drawDescField() {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-      child: StreamBuilder(
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
+        child: SimpleTextField(
+          controller: descController,
+          focusNode: descFocus,
           stream: descStreamController.stream,
-          builder: (context, snapshot) {
-            return TextFormField(
-              controller: descController,
-              focusNode: descFocus,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (value) => addTaskAction,
-              decoration: InputDecoration(
-                  labelText: "Details", //'Details'
-                  labelStyle: bodyText1.override(
-                    fontFamily: 'Lexend Deca',
-                    color: tertiaryColor,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
-                  hintText:
-                      "Enter a description here...", //'Enter a description here...'
-                  hintStyle: bodyText1.override(
-                    fontFamily: 'Lexend Deca',
-                    color: tertiaryColor,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: streamColor(snapshot.data, descFocus),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: streamColor(snapshot.data, descFocus),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  )),
-              style: bodyText1,
-              textAlign: TextAlign.start,
-              maxLines: 3,
-            );
-          }),
-    );
+          labelText: "Details",
+          hintText: "Enter a description here...",
+          maxLines: 3,
+        ));
   }
 
   Widget _drawDateBtn() {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-      child: InkWell(
-        onTap: () async {},
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.92,
-          height: 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: black55,
-              width: 1,
-            ),
-          ),
-          child: GestureDetector(
-            onTap: () {
-              Future<DateTime?> selectedDate = showDatePicker(
-                context: context,
-                initialDate: DateTime.now(), // 초깃값
-                firstDate: DateTime(2018), // 시작일
-                lastDate: DateTime(2030), // 마지막일
-              );
-
-              selectedDate.then((dateTime) {
-                setState(() {
-                  _selectedTime = dateTime;
-                });
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.92,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            Future<DateTime?> selectedDate = showDatePicker(
+              context: context,
+              initialDate: DateTime.now(), // 초깃값
+              firstDate: DateTime(2018), // 시작일
+              lastDate: DateTime(2030), // 마지막일
+            );
+            selectedDate.then((dateTime) {
+              setState(() {
+                _selectedTime = dateTime;
               });
-            },
-            child: Container(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
-              child: Text(
-                DateFormat.yMMMd().format(_selectedTime ?? DateTime.now()),
-                style: bodyText1.override(
-                  fontFamily: 'Lexend Deca',
-                  color: tertiaryColor,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14,
-                ),
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                side: BorderSide(color: black55)),
+          ),
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              DateFormat.yMMMd().format(_selectedTime ?? DateTime.now()),
+              style: bodyText1.override(
+                color: tertiaryColor,
               ),
             ),
           ),
@@ -287,47 +210,40 @@ class _InsertTodoState extends State<InsertTodos> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            width: 130,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
-              style: ElevatedButton.styleFrom(primary: Colors.grey),
-            ),
+          SimpleButton(
+            onPressed: () async {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+            style: ElevatedButton.styleFrom(primary: Colors.grey),
           ),
-          SizedBox(
-            width: 130,
-            height: 50,
-            child: StreamBuilder<bool>(
-                stream: btnStreamController.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    return ElevatedButton(
-                        onPressed: snapshot.data == null
-                            ? null
-                            : snapshot.data!
-                                ? () {
-                                    addTaskAction();
-                                  }
-                                : null,
-                        child:
-                            Text(_nowQueryType ? "Update Task" : "Creat Task"));
-                  } else {
-                    return const ElevatedButton(
-                        onPressed: null, child: Text("Now loading..."));
-                  }
-                }),
-          ),
+          StreamBuilder<bool>(
+              stream: btnStreamController.stream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.none) {
+                  return const SimpleButton(
+                    onPressed: null,
+                    child: Text("Back"),
+                  );
+                } else {
+                  return SimpleButton(
+                      onPressed: snapshot.data == null
+                          ? null
+                          : snapshot.data!
+                              ? () {
+                                  addTaskAction();
+                                }
+                              : null,
+                      child:
+                          Text(_nowQueryType ? "Update Task" : "Creat Task"));
+                }
+              }),
         ],
       ),
     );
   }
 
 // ! Cycles -------------------------------
-  late bool _nowQueryType;
 
   @override
   void initState() {
