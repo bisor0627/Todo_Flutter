@@ -85,21 +85,6 @@ class _InsertTodoState extends State<InsertTodos> {
     Navigator.pop(context);
   }
 
-  Color streamColor(Object? obj, FocusNode focus) {
-    String text = obj.toString().trim();
-    if (focus.hasFocus == true) {
-      if (text.isEmpty) {
-        return Colors.redAccent;
-      } else {
-        return Colors.blueAccent;
-      }
-    } else if (focus.hasFocus && text.isEmpty) {
-      return black55;
-    } else {
-      return black55;
-    }
-  }
-
 // ! Widgets -------------------------------
   List<Widget> _drawTitle() {
     return [
@@ -183,7 +168,7 @@ class _InsertTodoState extends State<InsertTodos> {
             });
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.white,
+            primary: ThemeData().canvasColor,
             elevation: 0,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
